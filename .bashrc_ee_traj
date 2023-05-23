@@ -1,0 +1,6 @@
+echo "END EFFECTOR TRAJECTORY SERVER"
+source $HOME/.bashrc
+cd $HOME/catkin_ws
+sleep 5
+rosrun boxes make_ee_trajectory_server.py
+exit

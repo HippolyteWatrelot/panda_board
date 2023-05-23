@@ -1,0 +1,6 @@
+echo "JOINTS TRAJECTORY MAKING SERVER"
+source $HOME/.bashrc
+cd $HOME/catkin_ws
+sleep 5
+rosrun boxes make_joint_trajectory_server.py
+exit

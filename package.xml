@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<package>
+  <name>panda_board</name>
+  <version>0.0.2</version>
+  <description>The panda_board package</description>
+
+  <maintainer email="watrelot@isir.upmc.fr">Hippolyte WATRELOT</maintainer>
+
+  <license>DREAM</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>trajectory_msgs</build_depend>
+  <build_depend>gazebo_msgs</build_depend>
+  <build_depend>yaml-cpp</build_depend>
+  <build_depend>urdf_parser_py</build_depend>
+  <build_depend>pykdl</build_depend>
+  <build_depend>pykdl_utils</build_depend>
+  <build_depend>message_generation</build_depend>
+
+  <build_depend>cd_dynamics</build_depend>
+  <build_depend>dream_utils</build_depend>
+  
+  <build_depend>message_runtime</build_depend>
+  
+  <build_depend>controller_interface</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>eigen_conversions</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>tf_conversions</build_depend>
+  <build_depend>libfranka</build_depend>
+  <build_depend>realtime_tools</build_depend>
+  <build_depend>hardware_interface</build_depend>
+  <build_depend>joint_limits_interface</build_depend>
+  <build_depend>franka_hw</build_depend>
+  <build_depend>franka_gripper</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+
+  <run_depend>controller_interface</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>eigen_conversions</run_depend>
+  <run_depend>realtime_tools</run_depend>
+  <run_depend>hardware_interface</run_depend>
+  <run_depend>joint_limits_interface</run_depend>
+  <run_depend>franka_hw</run_depend>
+  <run_depend>franka_gripper</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>franka_control</run_depend>
+  <run_depend>franka_description</run_depend>
+  <run_depend>moveit_ros_planning_interface</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>trajectory_msgs</run_depend>
+  <run_depend>gazebo_msgs</run_depend>
+  <run_depend>yaml-cpp</run_depend>
+  <run_depend>urdf_parser_py</run_depend>
+  <run_depend>pykdl</run_depend>
+  <run_depend>message_runtime</run_depend>
+
+  <export>
+
+  </export>
+</package>

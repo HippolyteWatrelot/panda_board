@@ -1,0 +1,22 @@
+<launch>
+
+    <arg name="gripper_gripping_early_time" default="0.100"/> 
+            
+    <param name="init_pos_joint_j1" value="0"/>
+    <param name="init_pos_joint_j2" value="-0.785398163397"/>
+    <param name="init_pos_joint_j3" value="0"/>
+    <param name="init_pos_joint_j4" value="-2.35619449019"/>
+    <param name="init_pos_joint_j5" value="0"/>
+    <param name="init_pos_joint_j6" value="1.57079632679"/>
+    <param name="init_pos_joint_j7" value="0.785398163397"/>
+    
+    <param name="timestep" value="0.005"/>
+
+    <param name="grasp_width" value="0.02"/>
+
+    <param name="use_gripper" value="true"/>
+    
+    <node name="panda_board_node" pkg="boxes" type="panda_board_node" output="screen" args="joint_states:=/joint_states" >
+    </node>
+    
+</launch>

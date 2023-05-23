@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="transmission" default="effort" doc="The type of position control to use (either 'position' or 'effort')" />
+
+  <node name="controller_spawner"
+        pkg="controller_manager"
+        type="spawner"
+        respawn="false"
+        output="screen"
+        args="$(arg transmission)_joint_trajectory_controller">
+  </node>
+
+  <node name="execute_joint_trajectory_server"
+        pkg="panda_board"
+        type="execute_joint_trajectory_server.py"
+        output="screen"
+        required="true">
+    <remap from="~follow_joint_trajectory" to="$(arg transmission)_joint_trajectory_controller/follow_joint_trajectory" />
+    <!-- <rosparam file="$(find franka_control)/config/start_pose.yaml" subst_value="true" /> -->
+    <!-- <remap from="~joint_states" to="franka_state_controller/joint_states" /> -->
+    <param name="max_dq" value="0.2" /> 
+  </node>
+
+</launch>

@@ -1,0 +1,7 @@
+echo "BUTTONS"
+source $HOME/.bashrc
+cd $HOME/taskboad_ws
+source ./baxter.sh
+sleep 15
+bash ../buttons.sh
+exit

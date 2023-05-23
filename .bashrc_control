@@ -1,0 +1,6 @@
+echo "CONTROL"
+source $HOME/.bashrc
+cd $HOME/taskboad_ws
+sleep 10
+roslaunch franka_control franka_control.launch load_gripper:=true robot_ip:=$ROBOT_IP
+exit

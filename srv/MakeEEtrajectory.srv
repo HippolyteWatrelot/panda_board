@@ -1,0 +1,9 @@
+float32[] ip
+float32[] iq
+float32[] fp
+float32[] fq
+uint16 mode
+
+---
+
+bool result

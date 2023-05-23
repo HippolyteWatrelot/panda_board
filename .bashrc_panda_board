@@ -1,0 +1,6 @@
+echo "PANDA_BOARD_NODE"
+source $HOME/.bashrc
+cd $HOME/catkin_ws
+sleep 10
+roslaunch panda_board panda_board.launch
+exit
