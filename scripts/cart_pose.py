@@ -28,7 +28,7 @@ Master_Tse = np.array([[np.sqrt(2) / 2,  np.sqrt(2) / 2,  0, 0.088],
                        [             0,               0,  0,     1]])
 
 
-def rotmatrix_to_quaternion():
+def transmatrix_to_posestamped():
     p = PoseStamped()
     trace = R[0, 0] + R[1, 1] + R[2, 2]
     if trace > 0:
