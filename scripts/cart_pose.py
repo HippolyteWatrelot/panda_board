@@ -68,6 +68,7 @@ def transmatrix_to_posestamped():
 
 def handle_jointpose_to_posestamped(joints_pose):
     global pose
+    cart_pose_pub = rospy.Publisher("/offset_cartesian_pose", PoseStamped, queue_size=500)
     thetalist = [joints_pose.position[i] for i in range(len(joints_pose.position))]
     transmatrix = FKinBody(Master_Tse, Blist, thetalist)
     ee_cartesian_pose = transmatrix_to_posestamped(transmatrix)
@@ -81,8 +82,6 @@ def jointspose_to_cartpose_server():
     rospy.init_node("jointspose_to_cartpose_server")
     
     joints_pose_sub = rospy.Subscriber("/joint_states", JointState, handle_jointpose_to_posestamped)
-
-    cart_pose_pub = rospy.Publisher("/offset_cartesian_pose", PoseStamped, queue_size=500)
  
     rospy.spin()
 
