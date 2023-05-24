@@ -70,7 +70,7 @@ def handle_jointpose_to_posestamped(joints_pose):
     global pose
     thetalist = [joints_pose.position[i] for i in range(len(joints_pose.position))]
     transmatrix = FKinBody(Master_Tse, Blist, thetalist)
-    ee_cartesian_pose = transmatrix_to_position_and_quaternion(rotmatrix)
+    ee_cartesian_pose = transmatrix_to_posestamped(transmatrix)
     cart_pose_pub.publish(ee_cartesian_pose)
 
 
