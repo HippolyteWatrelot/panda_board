@@ -25,7 +25,8 @@ if __name__ == "__main__":
     if len(sys.argv) == 1:
         gripper_time = -1
         test = False
-        while not test float(gripper_time) < 0:
+        while not test or float(gripper_time) < 0:
+            test = False
             gripper_time = input("time for gripper to close : ")
             try:
                 gripper_time = float(gripper_time)
