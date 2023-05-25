@@ -28,13 +28,14 @@ termcapinfo xterm*|linux*|rxvt*|Eterm* OP
 termcapinfo xterm 'is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l'
 
 
-defnonblock 6
+defnonblock 5
 
 ## To be applied when Franka core is active
 
-screen -t boxes /bin/bash --rcfile .bashrc_panda_board
-screen -t buttons /bin/bash --rcfile .bashrc_buttons
-screen -t panda_cart_info /bin/bash --rcfile .bashrc_cart
+#screen -t boxes /bin/bash --rcfile .bashrc_panda_board
+#screen -t panda_cart_info /bin/bash --rcfile .bashrc_cart
+screen -t panda_control /bin/bash --rcfile .bashrc_control
+screen -t panda_buttons /bin/bash --rcfile .bashrc_buttons
 screen -t panda_ee /bin/bash --rcfile .bashrc_ee_traj
-screen -t panda_joint /bin/bash --rcfile .bashrc_ee_traj
-screen -t panda_joint_execution /bin/bash --rcfile .bashrc_ee_traj
+screen -t panda_joint /bin/bash --rcfile .bashrc_joint_traj
+screen -t panda_joint_execution /bin/bash --rcfile .bashrc_execute
