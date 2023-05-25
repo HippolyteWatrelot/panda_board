@@ -34,5 +34,16 @@ if __name__ == "__main__":
             except:
                 pass
     else:
-        gripper_time = float(sys.argv[1])
+        try:
+            gripper_time = float(sys.argv[1])
+            test = True
+        except:
+            test = False
+        while not test:
+            test = False
+            try:
+                gripper_time = float(sys.argv[1])
+                test = True
+            except:
+                pass
     execute_joint_trajectory_client(gripper_time)
