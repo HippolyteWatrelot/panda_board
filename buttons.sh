@@ -126,3 +126,4 @@ do
     fi
 
     rostopic pub -1 /panda_board/command_ind std_msgs/Int16 $CODE
+done
