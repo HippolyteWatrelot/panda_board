@@ -66,7 +66,7 @@ status = 0
 joint_names = ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
 standard_joints = [0, -0.785398163397, 0, -2.35619449019, 0, 1.57079632679, 0.785398163397]
 init_joints = [0, 0, 0, 0, 0, 0, 0]
-queried_joint_state = JointTrajectoryPoint()
+queried_joint_states = JointTrajectoryPoint()
 #for i in range(7):
 #    queried_joint_state.position[i] = init_joints[i]
 current_joint_states = JointState()
@@ -100,7 +100,7 @@ def ECT(req):
 
 
     rospy.loginfo("Move to init pose: Waiting for '" + action + "' action to come up")
-    gripper_time, indice = req.gt, req.i
+    gripper_time = req.gt
     #print("Type Trajectory: ", type(Trajectory.points))
     #print("Trajectory: ", Trajectory.points)
     print("Traj points: ", Traj_points)
@@ -109,13 +109,10 @@ def ECT(req):
     if gripper_time < 0.005:
         while type(gripper_time) != float or gripper_time < 0.005:
             gripper_time = float(input("set gripper time: "))
-    if indice == 0:
-        init_joints = standard_joints
-    else:
-        init_joints = Traj_points[0].positions
-    print("first: ", current_joint_state.position)
+    init_joints = Traj_points[0].positions
+    print("first: ", current_joint_states.position)
     print("last: ", init_joints)
-    max_movement = max(abs(init_joints[i] - current_joint_state.position[i]) for i in range(len(init_joints)))
+    max_movement = max(abs(init_joints[i] - current_joint_states.position[i]) for i in range(len(init_joints)))
     init_point = JointTrajectoryPoint()                                                                           # init_point represents query
     init_point.time_from_start = rospy.Duration.from_sec(max(max_movement / rospy.get_param('~max_dq', 0.5), 0.5))
     #init_Goal.trajectory.joint_names, init_point.positions = [list(x) for x in zip(*init_pose.items())]
@@ -178,9 +175,9 @@ def ECT(req):
 
 
 
-def handle_current_joints_states(jointstate):
-    global current_joint_state
-    current_joint_state = jointstate
+def handle_current_joint_states(jointstate):
+    global current_joint_states
+    current_joint_states = jointstate
 
 
 #def handle_traj(traj):
@@ -214,8 +211,8 @@ def handle_status(msg):
 
 
 def handle_queried_joints_states(joinstate):
-    global queried_joint_state
-    queried_joint_state = jointstate
+    global queried_joint_states
+    queried_joint_states = jointstate
  
 
 def handle_ECT(req):
@@ -228,7 +225,7 @@ def execute_joint_trajectory_server():
     rospy.init_node("execute_joint_traj_server")
 
     #sub_current_pose = rospy.Subscriber("/static_cartesian_pose", PoseStamped, handle_current_pose)
-    sub_current_joints_poses = rospy.Subscriber("/joint_states", JointState, handle_current_joints_states)
+    sub_current_joints_poses = rospy.Subscriber("/joint_states", JointState, handle_current_joint_states)
     #sub_queried_joint_pose = rospy.Subscriber("/panda_robot/queried_joint_states", JointTrajectoryPoint, handle_queried_joints_states)
     #sub_joint_trajectory = rospy.Subscriber("/panda_board/candidate_joint_trajectory", JointTrajectory, handle_traj)
     sub_joint_trajectory_point = rospy.Subscriber("/panda_board/candidate_joint_trajectory_point", JointTrajectoryPoint, handle_traj_point)
