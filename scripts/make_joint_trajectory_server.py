@@ -25,6 +25,7 @@ error = []
 thetalist =   [0,               0, 0,              0, 0,             0,              0]
 init_joint =  [0, -0.785398163397, 0, -2.35619449019, 0, 1.57079632679, 0.785398163397]
 final_joint = [0, -0.785398163397, 0, -2.35619449019, 0, 1.57079632679, 0.785398163397]
+current_joint_states = JointState()
 
 '''CONSTANT'''
 #panda = URDF.load_from_parameter_server(verbose=False)
@@ -79,7 +80,7 @@ ev = 0.0001
 
 
 
-
+###################################################################################
 
 
 
@@ -221,7 +222,7 @@ def se3ToVec(se3mat):
 
 
 
-
+##################################################################################
 
 
 
@@ -271,14 +272,15 @@ def right_angles(thetalist):
     return thetalist
     
     
-def newton_raphson(Tse):
-    standard_Tse = FKinBody(Real_Home_Tse, Real_Blist, Standard_thetalist)
-    print("standard Tse:\n", standard_Tse)
-    Vb_bracket = MatrixLog6(TransInv(standard_Tse) @ Tse)
+def newton_raphson(Tse, init_joint_states):
+    ref_thetalist = init_joint_states.position
+    ref_Tse = FKinBody(Real_Home_Tse, Real_Blist, ref_thetalist)
+    print("ref Tse:\n", ref_Tse)
+    Vb_bracket = MatrixLog6(TransInv(ref_Tse) @ Tse)
     Vb = se3ToVec(Vb_bracket)
     aem = np.sqrt(Vb[0] ** 2 + Vb[1] ** 2 + Vb[2] ** 2)
     lem = np.sqrt(Vb[3] ** 2 + Vb[4] ** 2 + Vb[5] ** 2)
-    thetalist = Standard_thetalist
+    thetalist = ref_thetalist
     print("first thetalist :", thetalist)
     T = standard_Tse
     while aem > eomg or lem > ev:
@@ -294,7 +296,6 @@ def newton_raphson(Tse):
             for i in range(len(indices)):
                 Jb[:, i] = np.zeros(6)
             if not Jb.any():
-                print("Newton_Raphson Convergence failed !")
                 return thetalist, False
             Jb_Pinv = np.linalg.pinv(Jb, 1e-3)
             thetalist += Jb_Pinv @ Vb
@@ -306,8 +307,6 @@ def newton_raphson(Tse):
         Vb = se3ToVec(Vb_bracket)
         aem = np.sqrt(Vb[0] ** 2 + Vb[1] ** 2 + Vb[2] ** 2)
         lem = np.sqrt(Vb[3] ** 2 + Vb[4] ** 2 + Vb[5] ** 2)
-    print("Newton_Raphson Convergence succeeded !")
-    print("Final NR thetalist: ", thetalist)
     return thetalist, True
 
 
@@ -330,21 +329,23 @@ def handle_joint_traj(req):
     global thetalist
     global Xerrs
     global error
-    dt = req.dt
+    global current_joint_states
+    dt, inter = req.dt, req.inter
     thetalists = []
     joint_trajectory = JointTrajectory()
     joint_trajectory.joint_names = ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
-    print("EE Trajectory:\n", EE_Trajectory[0])
     Tse = EE_Trajectory[0]
     Tsed = EE_Trajectory[0]
-    thetalist, test = newton_raphson(Tse)
-    #joint_traj_pub = rospy.Publisher("/panda_board/candidate_joint_trajectory", JointTrajectory, queue_size=1)
     joint_traj_point_pub = rospy.Publisher("/panda_board/candidate_joint_trajectory_point", JointTrajectoryPoint, queue_size=1)
-    message_pub = rospy.Publisher("/panda_board/situation", String, queue_size=1)
+    thetalist, test = newton_raphson(Tse, current_joint_states)
     if not test:
+        print("Newton-Raphson did not converge !")
         return False
+    else:
+        print("Newton_Raphson Convergence succeeded !")
+        print("Final NR thetalist: ", thetalist)
     for j in range(len(thetalist)):
-            thetalist[j] = (thetalist[j] + np.pi) % (2 * np.pi) - np.pi
+        thetalist[j] = (thetalist[j] + np.pi) % (2 * np.pi) - np.pi
     Int_error = [0, 0, 0, 0, 0, 0]
     for i in range(1, len(EE_Trajectory)):
         joint_point = JointTrajectoryPoint()
@@ -375,16 +376,12 @@ def handle_joint_traj(req):
                 EE_Trajectory = []
             return False
         joint_point.positions = thetalists[i-1]
-        #joint_point.time_from_start = rospy.Duration.from_sec(i * dt)
         joint_traj_point_pub.publish(joint_point)
         joint_trajectory.points.append(joint_point)
         Tse = FKinBody(Real_Home_Tse, Real_Blist, thetalist)
         Tsed = TsedNext
-    #Joint_Poses_Trajectory = JointsToJointsPoses(Joint_Trajectory)
-    #print("Joints Trajectory:\n", joint_trajectory.points)
-    #joint_traj_pub.publish(joint_trajectory)
-    message_pub.publish("Joint trajectory made !")
     print("Joint trajectory made !")
+    EE_Trajectory = []
     return True
         
 
@@ -399,11 +396,10 @@ def handle_ee_traj(msg):
         EE_Trajectory.append(reshape_to_transmatrix(real_traj[i]))
 
 
-#def handle_joints(msg):
-#    global init_joint, final_joint, thetalist
-#    init_joint = msg.data[0]
-#    thetalist = msg.data[0]
-#    final_joint = msg.data[1]
+def handle_current_joint_states(jointstate):
+    global current_joint_states
+    current_joint_states = jointstate
+
 
 def handle_dt(msg):
     global dt
@@ -413,10 +409,9 @@ def handle_dt(msg):
 def make_joint_trajectory_server():
 
     rospy.init_node("make_joint_traj")
+    sub_current_joints_poses = rospy.Subscriber("/joint_states", JointState, handle_current_joint_states)
     '''Array of flattened Transform Matrices'''
-    ee_traj_sub = rospy.Subscriber("/panda_board/candidate_ee_trajectory", Float32MultiArray, handle_ee_traj)   
-    '''2D Vector'''
-#    init_and_final_joint_sub = rospy.Subscriber("/panda_board/init_and_final_joints", Float32MultiArray, handle_joints)
+    ee_traj_sub = rospy.Subscriber("/panda_board/candidate_ee_trajectory", Float32MultiArray, handle_ee_traj)
  
     s = rospy.Service("make_joint_traj", MakeJointTrajectory, handle_joint_traj)
     rospy.spin()
