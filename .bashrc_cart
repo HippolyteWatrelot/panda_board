@@ -2,5 +2,5 @@ echo "JOINTS STATES TO END EFFECTOR CARTESIAN POSE SERVER"
 source $HOME/.bashrc
 cd $HOME/catkin_ws
 sleep 5
-rosrun boxes cart_pose.py
+rosrun panda_board cart_pose.py
 exit
