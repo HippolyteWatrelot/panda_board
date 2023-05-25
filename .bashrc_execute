@@ -1,0 +1,6 @@
+echo "EXECUTE TRAJECTORY MAKING SERVER"
+source $HOME/.bashrc
+cd $HOME/catkin_ws
+sleep 5
+rosrun panda_board execute_joint_trajectory_server.py
+exit
