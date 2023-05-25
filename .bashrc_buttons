@@ -1,7 +1,6 @@
 echo "BUTTONS"
 source $HOME/.bashrc
-cd $HOME/taskboad_ws
-source ./baxter.sh
-sleep 15
+cd $HOME/catkin_ws
+sleep 5
 bash ../buttons.sh
 exit
