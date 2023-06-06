@@ -272,8 +272,8 @@ def right_angles(thetalist):
     return thetalist
     
     
-def newton_raphson(Tse, init_joint_states):
-    ref_thetalist = init_joint_states.position
+def newton_raphson(Tse, ref_thetalist):
+    #ref_thetalist = init_joint_states.position
     ref_Tse = FKinBody(Real_Home_Tse, Real_Blist, ref_thetalist)
     print("ref Tse:\n", ref_Tse)
     Vb_bracket = MatrixLog6(TransInv(ref_Tse) @ Tse)
@@ -282,7 +282,7 @@ def newton_raphson(Tse, init_joint_states):
     lem = np.sqrt(Vb[3] ** 2 + Vb[4] ** 2 + Vb[5] ** 2)
     thetalist = ref_thetalist
     print("first thetalist :", thetalist)
-    T = standard_Tse
+    T = ref_Tse
     while aem > eomg or lem > ev:
         k = 0
         Jb = JacobianBody(Real_Blist, thetalist)
@@ -329,15 +329,15 @@ def handle_joint_traj(req):
     global thetalist
     global Xerrs
     global error
-    global current_joint_states
-    dt, inter = req.dt, req.inter
+    #global current_joint_states
+    dt = req.dt
     thetalists = []
     joint_trajectory = JointTrajectory()
     joint_trajectory.joint_names = ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
     Tse = EE_Trajectory[0]
     Tsed = EE_Trajectory[0]
     joint_traj_point_pub = rospy.Publisher("/panda_board/candidate_joint_trajectory_point", JointTrajectoryPoint, queue_size=1)
-    thetalist, test = newton_raphson(Tse, current_joint_states)
+    thetalist, test = newton_raphson(Tse, Standard_thetalist)
     if not test:
         print("Newton-Raphson did not converge !")
         return False

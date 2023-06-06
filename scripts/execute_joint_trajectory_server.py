@@ -104,8 +104,6 @@ def ECT(req):
     #print("Type Trajectory: ", type(Trajectory.points))
     #print("Trajectory: ", Trajectory.points)
     print("Traj points: ", Traj_points)
-    if indice not in [0, 1, 2]:
-        sys.exit("ERROR : Bad indice for init pose !")
     if gripper_time < 0.005:
         while type(gripper_time) != float or gripper_time < 0.005:
             gripper_time = float(input("set gripper time: "))
@@ -130,6 +128,7 @@ def ECT(req):
     client.send_goal_and_wait(init_Goal)
     init_result = client.get_result()
     
+    indice = 2
     if init_result.error_code == FollowJointTrajectoryResult.SUCCESSFUL:
         client = SimpleActionClient(action, FollowJointTrajectoryAction)
         if indice == 0:
