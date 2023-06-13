@@ -331,7 +331,7 @@ def handle_joint_traj(req):
     global Xerrs
     global error
     #global current_joint_states
-    dt, k = req.dt, req.sim
+    dt = req.dt
     thetalists = []
     joint_trajectory = JointTrajectory()
     joint_trajectory.joint_names = ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
