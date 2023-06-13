@@ -26,6 +26,7 @@ thetalist =   [0,               0, 0,              0, 0,             0,         
 init_joint =  [0, -0.785398163397, 0, -2.35619449019, 0, 1.57079632679, 0.785398163397]
 final_joint = [0, -0.785398163397, 0, -2.35619449019, 0, 1.57079632679, 0.785398163397]
 current_joint_states = JointState()
+current_joint_states_sim = JointState()
 
 '''CONSTANT'''
 #panda = URDF.load_from_parameter_server(verbose=False)
@@ -330,7 +331,7 @@ def handle_joint_traj(req):
     global Xerrs
     global error
     #global current_joint_states
-    dt = req.dt
+    dt, k = req.dt, req.sim
     thetalists = []
     joint_trajectory = JointTrajectory()
     joint_trajectory.joint_names = ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
@@ -399,6 +400,10 @@ def handle_ee_traj(msg):
 def handle_current_joint_states(jointstate):
     global current_joint_states
     current_joint_states = jointstate
+    
+def handle_current_joint_states_sim(jointstate):
+    global current_joint_states_sim
+    current_joint_states_sim = jointstate
 
 
 def handle_dt(msg):
@@ -410,6 +415,7 @@ def make_joint_trajectory_server():
 
     rospy.init_node("make_joint_traj")
     sub_current_joints_poses = rospy.Subscriber("/joint_states", JointState, handle_current_joint_states)
+    sub_current_joints_poses_sim = rospy.Subscriber("/panda_simulator/custom_franka_state_controller/joint_states", JointState, handle_current_joint_states_sim)
     '''Array of flattened Transform Matrices'''
     ee_traj_sub = rospy.Subscriber("/panda_board/candidate_ee_trajectory", Float32MultiArray, handle_ee_traj)
  
