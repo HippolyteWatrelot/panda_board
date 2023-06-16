@@ -10,7 +10,7 @@ from std_msgs.msg import Float32, Int16, String
 
 
 def execute_joint_trajectory_client_sim(gripper_time):
-    rospy.wait_for_service("execute_joint_traj_service")
+    rospy.wait_for_service("execute_joint_traj_service_sim")
     try:
         traj = rospy.ServiceProxy("execute_joint_traj_service_sim", ExecuteJointTrajectorySim)
         traj(gripper_time)
