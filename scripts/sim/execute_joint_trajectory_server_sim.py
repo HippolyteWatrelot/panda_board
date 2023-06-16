@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import rospy
 import numpy as np
 from panda_robot import PandaArm
@@ -22,6 +24,8 @@ from sensor_msgs.msg import JointState
 
 from franka_tools import JointTrajectoryActionClient
 
+from std_msgs.msg import Int16
+
 status = 0
 joint_names = ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
 standard_joints = [0, -0.785398163397, 0, -2.35619449019, 0, 1.57079632679, 0.785398163397]
@@ -30,30 +34,28 @@ current_joint_states = JointState()
 Traj_points = []
 
 
-def ECT(req):
+def handle_ECT(req):
 
-    #global init_pose
     global init_joints
     global status
     global current_joint_states
-    global Traj_point
-
+    global Traj_points
+   
     p = PandaArm()
-    rospy.loginfo("Move to init pose: Waiting for '" + action + "' action to come up")
     gripper_time = req.gt
-    #print("Type Trajectory: ", type(Trajectory.points))
-    #print("Trajectory: ", Trajectory.points)
     print("Traj points: ", Traj_points)
     if gripper_time < 0.005:
         while type(gripper_time) != float or gripper_time < 0.005:
             gripper_time = float(input("set gripper time: "))
     init_joints = Traj_points[0].positions
+    print("current_joints: ", p.joint_angles())
+    print("init joints: ", init_joints)
     p.move_to_joint_position(init_joints)
+    print("init_position !")
    
     print("sleeping for 1 second...")
     rospy.sleep(1)
     '''Now specific trajectory'''
-    rospy.loginfo("Straight trajectory: Waiting for '" + action + "' action to come up")
     traj_client = JointTrajectoryActionClient(joint_names)
     _timeout = 15
     rospy.sleep(3)
@@ -61,8 +63,7 @@ def ECT(req):
         traj_client.add_point(Traj_points[k].positions, k * 0.01)
     rospy.sleep(1)
     traj_client.start()
-    traj_client.wait(gripper_time)###     
-    ###client.wait_for_result(timeout=rospy.Duration(max(_timeout - gripper_time, 0)))###
+    traj_client.wait(gripper_time)
     result = traj_client.result()
     Traj_points = []
     if result.error_code == FollowJointTrajectoryResult.SUCCESSFUL:
