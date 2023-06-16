@@ -84,8 +84,7 @@ def ECT(req):
     global grasp_command
     global command
     global status
-    global current_joint_state
-    global queried_joint_state
+    global current_joint_states
     global Traj_points
     
     grasp_pub = rospy.Publisher("/franka_gripper/grasp/goal", GraspActionGoal, queue_size=0)
