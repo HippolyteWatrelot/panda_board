@@ -40,6 +40,7 @@ add_service_files(
   MakeEEtrajectory.srv 
   MakeJointTrajectory.srv
   ExecuteJointTrajectory.srv
+  ExecuteJointTrajectorySim.srv
 )
 
 generate_messages(
@@ -94,11 +95,11 @@ catkin_install_python(PROGRAMS scripts/execute_joint_trajectory_client.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-catkin_install_python(PROGRAMS scripts/execute_joint_trajectory_server_sim.py
+catkin_install_python(PROGRAMS scripts/sim/execute_joint_trajectory_server_sim.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-catkin_install_python(PROGRAMS scripts/execute_joint_trajectory_client_sim.py
+catkin_install_python(PROGRAMS scripts/sim/execute_joint_trajectory_client_sim.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
